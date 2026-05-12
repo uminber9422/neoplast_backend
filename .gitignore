@@ -1,0 +1,38 @@
+# Environment and Sensitive Data
+.env
+.env.*
+*.pem
+*.key
+
+# Database and App Data (Docker volumes)
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Testing and Coverage
+.pytest_cache/
+htmlcov/
+.coverage
+.tox/
+
+# IDE and Editor Files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS Generated Files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  neoplast_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: neoplast-backend
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - ./.env:/app/.env
+      - backend_data:/app/data
+    restart: unless-stopped
+    networks:
+      - neoplast_network
+
+volumes:
+  backend_data:
+
+networks:
+  neoplast_network:
+    name: neoplast_network
+    driver: bridge
