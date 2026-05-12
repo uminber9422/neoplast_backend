@@ -17,8 +17,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Since backend is a package (backend.main), we copy it into /app/backend
 COPY . ./backend
 
-# Expose the API port
-EXPOSE 8080
+# Expose the API port (default 8080, overridden by APP_PORT env)
+ARG APP_PORT=8004
+ENV APP_PORT=${APP_PORT}
+EXPOSE ${APP_PORT}
 
 # Command to run the application using the package path
-CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD uvicorn backend.main:app --host 0.0.0.0 --port ${APP_PORT}

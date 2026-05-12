@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: neoplast-backend
     ports:
-      - "8003:8003"
+      - "${APP_PORT:-8004}:${APP_PORT:-8004}"
     env_file:
       - .env
     volumes:
