@@ -5,6 +5,7 @@ WORKDIR /app
 # Install system dependencies if required
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and alembic config first to cache the pip install step
