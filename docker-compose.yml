@@ -1,15 +1,44 @@
-version: '3.8'
-
 services:
   neoplast_backend:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: neoplast-backend
-    ports:
-      - "${APP_PORT:-8004}:${APP_PORT:-8004}"
-    env_file:
-      - .env
+    expose:
+      - "${APP_PORT:-8004}"
+    environment:
+      # --- App ---
+      - APP_ENV=${APP_ENV:-production}
+      - APP_HOST=${APP_HOST:-0.0.0.0}
+      - APP_PORT=${APP_PORT:-8004}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      # --- Security (required) ---
+      - SECRET_KEY=${SECRET_KEY:?SECRET_KEY is required}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES:-15}
+      - REFRESH_TOKEN_EXPIRE_DAYS=${REFRESH_TOKEN_EXPIRE_DAYS:-7}
+      - BCRYPT_ROUNDS=${BCRYPT_ROUNDS:-12}
+      - CORS_ORIGINS=${CORS_ORIGINS:?CORS_ORIGINS is required}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:?ALLOWED_HOSTS is required}
+      # --- Database ---
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./data/neoplast.db}
+      # --- Email validation ---
+      - EMAIL_API_PROVIDER=${EMAIL_API_PROVIDER:-zerobounce}
+      - ZEROBOUNCE_API_KEY=${ZEROBOUNCE_API_KEY:-}
+      - REOON_API_KEY=${REOON_API_KEY:-}
+      # --- Web search ---
+      - SERPER_API_KEY=${SERPER_API_KEY:-}
+      # --- LLM extraction ---
+      - OPENAI_API_KEY=${OPENAI_API_KEY:?OPENAI_API_KEY is required}
+      - LLM_MODEL=${LLM_MODEL:-gpt-4o-mini}
+      - LLM_BATCH_SIZE=${LLM_BATCH_SIZE:-10}
+      # --- Pipeline tuning ---
+      - STALE_THRESHOLD_DAYS=${STALE_THRESHOLD_DAYS:-30}
+      - UPLOAD_MAX_SIZE_MB=${UPLOAD_MAX_SIZE_MB:-50}
+      - INGEST_BATCH_SIZE=${INGEST_BATCH_SIZE:-100}
+      # --- Rate limiting ---
+      - RATE_LIMIT_LOGIN=${RATE_LIMIT_LOGIN:-5/minute}
+      # --- Admin bootstrap (required for first-run seeding) ---
+      - DEFAULT_ADMIN_USER=${DEFAULT_ADMIN_USER:?DEFAULT_ADMIN_USER is required}
+      - DEFAULT_ADMIN_PASSWORD=${DEFAULT_ADMIN_PASSWORD:?DEFAULT_ADMIN_PASSWORD is required}
     volumes:
       - backend_data:/app/data
     restart: unless-stopped
@@ -19,13 +48,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
-    networks:
-      - neoplast_network
 
 volumes:
   backend_data:
-
-networks:
-  neoplast_network:
-    name: neoplast_network
-    driver: bridge
